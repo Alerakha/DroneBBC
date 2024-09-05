@@ -27,7 +27,7 @@ def get_distance(sensor_id):
                 return msg.current_distance /100 # Return the current distance in meters
         else:
         	print("Error sensor not detected, {msg.id}")
-        	time.sleep(0.1)
+time.sleep(0.1)
 
 
 # ===========================================
