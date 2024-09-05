@@ -106,9 +106,9 @@ def takeoff(alt):
         rcover(1500, 1500, 1620, 0, 0, 0, 0, 0)
         bottom_distance = get_distance(0)
         if bottom_distance >= alt:
-            print("Target height reached. Hovering...")
-            rcover(1500, 1500, 1450, 0, 0, 0, 0, 0) 
-            bottom_distance = get_distance(0)
+            print(f"Target height reached{alt}. Hovering...")
+            rcover(1500, 1500, 1450, 0, 0, 0, 0, 0)
+            return print("Take Off step already done")
 			
 # ============================================
 # =======================================================================================|| READ SENSOR
@@ -133,6 +133,7 @@ def read_sensor(perulangan):
 
 # ============================================
 # =======================================================================================|| ADJUST POSISI
+'''
 def adjust():
     right_distance = get_distance(12)
     left_distance = get_distance(16)
@@ -147,6 +148,23 @@ def adjust():
         rcover(1500 - nilaikanan,1450,1500,0,0,0,0) #rodok ngiri
         print("Drone rodok ngiri")
         right_distance = get_distance(12)
+'''
+def adjust():
+    while True:
+        right_distance = get_distance(12)
+        left_distance = get_distance(16)
+        
+        if left_distance < 0.7:
+            nilaikiri = 150 - (left_distance*10)
+            rcover(1500 + nilaikiri, 1450, 1450, 0, 0, 0, 0, 0)  # rodok nganan
+            print("Drone rodok nganan")
+            
+        elif right_distance < 0.7:
+            nilaikanan = 150 - (right_distance*10)
+            rcover(1500 - nilaikanan, 1450, 1450, 0, 0, 0, 0, 0)  # rodok ngiri
+            print("Drone rodok ngiri")
+        else:
+            print("Drone stabil")
 
 # ============================================
 # =======================================================================================|| RCOVER
@@ -193,7 +211,7 @@ def belok():
         front_distance = get_distance(10)
         left_distance = get_distance(16)
         while front_distance > 2:
-            rcover(1500,1420,1500,0,0,0,0,0)
+            rcover(1500,1420,1500,0,0,0,0,0) #Maju
             front_distance = get_distance(10)
     
     while right_distance < 1 and front_distance <= 2:
@@ -202,7 +220,7 @@ def belok():
         front_distance = get_distance(10)
         right_distance = get_distance(16)
         while front_distance > 2:
-            rcover(1500,1420,1500,0,0,0,0,0)
+            rcover(1500,1420,1500,0,0,0,0,0) #Maju
             front_distance = get_distance(10)
     
     else :
@@ -235,6 +253,10 @@ def leron():
     webcam.daemon = True
     webcam.start()
     
+    adjust = threading.Thread(target=adjust)
+    adjust.daemon = True
+    adjust.start()
+    
     while bottom_distance > 0.4:
         maju() #3 hover in maju function
         
@@ -256,12 +278,12 @@ def leron():
         arm(0)
 
 
-# JUST TAKE OFF LANDING, NOT USING SENSORS
+# JUST TAKE OFF LANDING
 def JTL():
     changemode(5)
     read_sensor(5)
     arm(1)
-    takeoff(1)
+    takeoff(1) #Jarak meter ketinggian
     rcover(1500,1420,1500,0,0,0,0,0)
     time.sleep(5)
     #test yaw

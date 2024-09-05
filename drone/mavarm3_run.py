@@ -160,8 +160,8 @@ def read_sensor(durasi):
 	    left_distance = get_distance(16)  # Replace 3 with the actual sensor ID
 	    bottom_distance = get_distance(0)
 	    '''
-	    print("Depan : ", end="")
-	    print(front_distance)
+    	print("Depan : ", end="")
+     	print(front_distance)
 	    print("Kanan : ", end="")
 	    print(right_distance)
 	    print("Kiri : ", end="")
@@ -235,14 +235,12 @@ def belok():
 		if front_distance > 3:
 			rcover(65535,1420,1500,0,0,0,0,0)
 			time.sleep(1)
-			continue
 	elif right_distance < 1 and front_distance < 1:
 		print("Kiri ada hambatan, belok kanan!")
 		rcover(0,1500,1500,1580,0,0,0,0)
 		if front_distance > 3:
 			rcover(65535,1420,1500,0,0,0,0,0)
 			time.sleep(1)
-			continue
 	else :
 		print("Else Belok, Hovering!")
 		rcover(1500,1500,1520,0,0,0,0,0)

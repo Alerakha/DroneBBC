@@ -3,7 +3,7 @@ import numpy as np
 import math
 import platform
 import mavarm3_2
-from pymavlink import mavutil
+# from pymavlink import mavutil
 
 def main():
 
