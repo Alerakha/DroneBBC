@@ -3,6 +3,7 @@ import numpy as np
 import math
 import platform
 import mavarm3_2
+import time
 # from pymavlink import mavutil
 
 def main():
@@ -22,24 +23,6 @@ def main():
         # Center point
         cx = int(width / 2)
         cy = int(height / 2)
-        
-        '''
-        pixel_center = hsv_frame[cy, cx]
-        hue_value = pixel_center[0]
-        saturation = pixel_center[1]
-        value = pixel_center[2]
-        
-        color = "Undefined"
-        if value > 50 and saturation > 80:
-            if hue_value >= 166:
-                color = "RED"
-            elif hue_value >= 6 and hue_value < 23:
-                color = "ORANGE"
-            elif hue_value >= 90 and hue_value <= 125:
-                color = "BLUE"
-            else:
-                color = "Undefined"
-        '''
         
         cv2.line(frame, (int(width/3), 0), (int(width/3), height), (200, 120, 0), 1)
         cv2.line(frame, (int(width/3)*2, 0), (int(width/3)*2, height), (200, 120, 0), 1)
@@ -98,13 +81,13 @@ def main():
                         centered = True
                     
                     # Label the detected shape
-                    shape_label = "Undefined Shape"
-                    if len(approx) == 4:
-                        shape_label = "Rectangle"
-                    elif len(approx) == 3:
-                        shape_label = "Triangle"
-                    else:
+                    shape_label = "Undefined shape"
+                    if len(approx) >= 6:
                         shape_label = "Circle"
+                    elif len(approx) == 4:
+                        shape_label = "Rectangle"
+                    else:
+                        shape_label = "Undefined shape"
  
                     # Draw the shape label
                     cv2.putText(frame, shape_label, (x + w + 20, y + h + 45), cv2.FONT_HERSHEY_COMPLEX, 0.7, (0, 255, 0), 2)
@@ -117,29 +100,35 @@ def main():
                     nilaikanan = distance
                     nilaidepan = distance
                     nilaibelakang = distance
+                    
                     if not centered:
                         direction = ""
                         if object_cx < width / 3:
                             direction = "Go Left"
-                            mavarm3_2.rcover((1500-nilaikiri),1500,1500,1500,0,0,0,0)
+                            mavarm3_2.rcover((1500-nilaikiri),1500,1557,1500,0,0,0,0)
                         elif object_cx > (width / 3) * 2:
                             direction = "Go Right"
-                            mavarm3_2.rcover((1500+nilaikanan),1500,1500,1500,0,0,0,0)
+                            mavarm3_2.rcover((1500+nilaikanan),1500,1557,1500,0,0,0,0)
                         elif object_cy < height / 3:
                             direction = "Forward"
-                            mavarm3_2.rcover((1500+nilaidepan),1500,1500,1500,0,0,0,0)
+                            mavarm3_2.rcover((1500+nilaidepan),1500,1557,1500,0,0,0,0)
                         elif object_cy > (height / 3) * 2:
                             direction = "Backward"
-                            mavarm3_2.rcover((1500-nilaibelakang),1500,1500,1500,0,0,0,0)
+                            mavarm3_2.rcover((1500-nilaibelakang),1500,1557,1500,0,0,0,0)
                         else :
-                            mavarm3_2.rcover(1500,1500,1520,1500,0,0,0,0)
+                            centered = True
+                            mavarm3_2.rcover(1500,1500,1550,1500,0,0,0,0)
 
                         if direction:
                             cv2.putText(frame, direction, (x + w + 20, y + h + 120), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 0, 255), 2)
-                    else :
-                        mavarm3_2.rcover(1500,1500,1450,1500,0,0,0,0)
+                    
+                    if centered :
+                        mavarm3_2.rcover(1500,1500,1470,1500,0,0,0,0)
                         cv2.putText(frame, "Lowering altitude", (x + w + 20, y + h + 120), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,0,255), 2)
-                        # 
+                        if mavarm3_2.bottom_distance < 0.6:
+                            mavarm3_2.rcover(1500,1500,1557,1500,0,0,0,0) #
+                            time.sleep(4)
+                            mavarm3_2.rcover(1500,1500,1590,1500,0,0,0,0)
                     
         # Panggil fungsi untuk setiap warna
         detect_and_label(mask_red, "RED", frame)

@@ -107,8 +107,8 @@ def takeoff(alt):
         bottom_distance = get_distance(0)
         if bottom_distance >= alt:
             print(f"Target height reached{alt}. Hovering...")
-            rcover(1500, 1500, 1450, 0, 0, 0, 0, 0)
-            return print("Take Off step already done")
+            rcover(1500, 1500, 1557, 0, 0, 0, 0, 0)
+            return print("Drone Hovering...")
 			
 # ============================================
 # =======================================================================================|| READ SENSOR
@@ -134,7 +134,7 @@ def read_sensor(perulangan):
 # ============================================
 # =======================================================================================|| ADJUST POSISI
 '''
-def adjust():
+def adjust_tengah():
     right_distance = get_distance(12)
     left_distance = get_distance(16)
     while left_distance < 0.7:
@@ -149,7 +149,7 @@ def adjust():
         print("Drone rodok ngiri")
         right_distance = get_distance(12)
 '''
-def adjust():
+def adjust_tengah():
     while True:
         right_distance = get_distance(12)
         left_distance = get_distance(16)
@@ -192,12 +192,12 @@ def maju():
         right_distance = get_distance(12)
         print("Drone maju")
         rcover(1500,1420,1500,0,0,0,0,0) 
-        adjust()
+        adjust_tengah()
             
     else:
         print("Depan ada hambatan, Drone Hovering!")
         rcover(1500, 1500, 1520, 0, 0, 0, 0, 0)
-        adjust()
+        adjust_tengah()
         front_distance = get_distance(10)
         left_distance = get_distance(16)
         right_distance = get_distance(12)
@@ -253,27 +253,27 @@ def leron():
     webcam.daemon = True
     webcam.start()
     
-    adjust = threading.Thread(target=adjust)
+    adjust = threading.Thread(target=adjust_tengah)
     adjust.daemon = True
     adjust.start()
     
-    while bottom_distance > 0.4:
+    while bottom_distance > 0.5:
         maju() #3 hover in maju function
         
         if front_distance <= 1 and left_distance > 2 and right_distance > 2:
             while front_distance <=1 :
-                rcover(1500, 1500, 1620, 0, 0, 0, 0, 0)
-                front_distance = get_distance(10)
+                rcover(1500, 1500, 1620, 0, 0, 0, 0, 0) #Drone naik
+                front_distance = get_distance(10) #Check jarak lidar depan 
                 if front_distance > 2:
-                    maju()
-                    time.sleep(5)
-                    changemode(9)
+                    maju() # Maju ketika jarak lidar depan kosong
+                    time.sleep(5) # Maju lima detik
+                    changemode(9) #Landing
                     
         elif front_distance <= 1 and (left_distance < 1 or right_distance < 1):
             belok() 
             
     else:
-        print("Drone in very low altitude!!!")
+        print("DRONE IN LOW ALTITUDE!!!")
         changemode(9) #Landing mode
         arm(0)
 
