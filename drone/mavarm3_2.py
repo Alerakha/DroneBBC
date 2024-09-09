@@ -7,7 +7,7 @@ import coba_uwaw
 usbser = '/dev/ttyUSB0'
 # vehicle = mavutil.mavlink_connection(usbser, baud=57600)
 # Run in terminal before code : mavproxy.py --master=/dev/ttyUSB0 --baudrate 57600 --out=udp:127.0.0.1:14550
-vehicle = mavutil.mavlink_connection('udp:127.0.0.1:114550')
+vehicle = mavutil.mavlink_connection('udp:127.0.0.1:14550')
 vehicle.wait_heartbeat()
 print(f"Connected to {usbser}")	
 print("OPENING : mavarm3_2.py....")
