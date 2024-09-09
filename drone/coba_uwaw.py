@@ -55,7 +55,9 @@ def main():
         #detect warna dan shape 
         def detect_and_label(mask, color_label, frame):
             centered = False
+            orange_proceed = False
             center_threshold = 20
+            normal_altitude = 2
             cnts, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
             for c in cnts:
                 area = cv2.contourArea(c)
@@ -101,34 +103,77 @@ def main():
                     nilaidepan = distance
                     nilaibelakang = distance
                     
-                    if not centered:
-                        direction = ""
-                        if object_cx < width / 3:
-                            direction = "Go Left"
-                            mavarm3_2.rcover((1500-nilaikiri),1500,1557,1500,0,0,0,0)
-                        elif object_cx > (width / 3) * 2:
-                            direction = "Go Right"
-                            mavarm3_2.rcover((1500+nilaikanan),1500,1557,1500,0,0,0,0)
-                        elif object_cy < height / 3:
-                            direction = "Forward"
-                            mavarm3_2.rcover((1500+nilaidepan),1500,1557,1500,0,0,0,0)
-                        elif object_cy > (height / 3) * 2:
-                            direction = "Backward"
-                            mavarm3_2.rcover((1500-nilaibelakang),1500,1557,1500,0,0,0,0)
-                        else :
-                            centered = True
-                            mavarm3_2.rcover(1500,1500,1550,1500,0,0,0,0)
+                    if shape_label == "Circle" and (color_label == "ORANGE" or color_label=="RED"):
+                        while not centered:
+                            direction = ""
+                            if object_cx < width / 3:
+                                direction = "Go Left"
+                                mavarm3_2.rcover((1500-nilaikiri),1500,1557,1500,0,0,0,0)
+                            elif object_cx > (width / 3) * 2:
+                                direction = "Go Right"
+                                mavarm3_2.rcover((1500+nilaikanan),1500,1557,1500,0,0,0,0)
+                            elif object_cy < height / 3:
+                                direction = "Forward"
+                                mavarm3_2.rcover((1500+nilaidepan),1500,1557,1500,0,0,0,0)
+                            elif object_cy > (height / 3) * 2:
+                                direction = "Backward"
+                                mavarm3_2.rcover((1500-nilaibelakang),1500,1557,1500,0,0,0,0)
+                            else :
+                                centered = True
+                                mavarm3_2.rcover(1500,1500,1550,1500,0,0,0,0)
 
-                        if direction:
-                            cv2.putText(frame, direction, (x + w + 20, y + h + 120), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 0, 255), 2)
-                    
-                    if centered :
-                        mavarm3_2.rcover(1500,1500,1470,1500,0,0,0,0)
-                        cv2.putText(frame, "Lowering altitude", (x + w + 20, y + h + 120), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,0,255), 2)
-                        if mavarm3_2.bottom_distance < 0.6:
-                            mavarm3_2.rcover(1500,1500,1557,1500,0,0,0,0) #
-                            time.sleep(4)
-                            mavarm3_2.rcover(1500,1500,1590,1500,0,0,0,0)
+                            if direction: #Ngasih tulisan direction
+                                cv2.putText(frame, direction, (x + w + 20, y + h + 120), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 0, 255), 2)
+                        
+                        while centered :
+                            current_altitude = mavarm3_2.bottom_distance
+                            if current_altitude > 0.6:
+                                mavarm3_2.rcover(1500,1500,1470,1500,0,0,0,0)
+                                cv2.putText(frame, "Lowering altitude", (x + w + 20, y + h + 120), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,0,255), 2)
+                                current_altitude = mavarm3_2.bottom_distance
+                            
+                            if current_altitude <= 0.6:
+                                mavarm3_2.rcover(1500,1500,1557,1500,0,0,0,0) #hovering sebentar
+                                time.sleep(4)
+                                mavarm3_2.rcover(1500,1500,1590,1500,0,0,0,0) #naik
+                                centered = False
+                                break
+                                    
+                    elif shape_label=="Rectangle" and (color_label =="RED" or color_label=="BLUE"):
+                        while not centered:
+                            direction = ""
+                            if object_cx < width / 3:
+                                direction = "Go Left"
+                                mavarm3_2.rcover((1500-nilaikiri),1500,1557,1500,0,0,0,0)
+                            elif object_cx > (width / 3) * 2:
+                                direction = "Go Right"
+                                mavarm3_2.rcover((1500+nilaikanan),1500,1557,1500,0,0,0,0)
+                            elif object_cy < height / 3:
+                                direction = "Forward"
+                                mavarm3_2.rcover((1500+nilaidepan),1500,1557,1500,0,0,0,0)
+                            elif object_cy > (height / 3) * 2:
+                                direction = "Backward"
+                                mavarm3_2.rcover((1500-nilaibelakang),1500,1557,1500,0,0,0,0)
+                            else :
+                                centered = True
+                                mavarm3_2.rcover(1500,1500,1550,1500,0,0,0,0)
+
+                            if direction: #Ngasih tulisan direction
+                                cv2.putText(frame, direction, (x + w + 20, y + h + 120), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 0, 255), 2)
+                        
+                        while centered :
+                            current_altitude = mavarm3_2.bottom_distance
+                            if current_altitude > 1:
+                                mavarm3_2.rcover(1500,1500,1470,1500,0,0,0,0)
+                                cv2.putText(frame, "Lowering altitude", (x + w + 20, y + h + 120), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,0,255), 2)
+                            
+                            if current_altitude <= 1:
+                                mavarm3_2.rcover(1500,1500,1557,1500,0,0,0,0) #hovering sebentar
+                                time.sleep(4)
+                                mavarm3_2.rcover(1500,1500,1590,1500,0,0,0,0) #naik
+                                time.sleep(3)
+                                break
+                            
                     
         # Panggil fungsi untuk setiap warna
         detect_and_label(mask_red, "RED", frame)
