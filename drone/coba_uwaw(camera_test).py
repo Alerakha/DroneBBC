@@ -2,9 +2,9 @@ import cv2
 import numpy as np
 import math
 import platform
-import mavarm3_2
+# import mavarm3_2
 import time
-from pymavlink import mavutil
+# from pymavlink import mavutil
 
 def main():
 
@@ -56,7 +56,6 @@ def main():
         #detect warna dan shape 
         def detect_and_label(mask, color_label, frame):
             centered = False
-            global drop_color
             orange_proceed = False
             center_threshold = 20
             normal_altitude = 2
@@ -110,83 +109,72 @@ def main():
                             direction = ""
                             if object_cx < width / 3:
                                 direction = "Go Left"
-                                mavarm3_2.rcover((1500-nilaikiri),1500,1557,1500,0,0,0,0)
+                                # mavarm3_2.rcover((1500-nilaikiri),1500,1557,1500,0,0,0,0)
                             elif object_cx > (width / 3) * 2:
                                 direction = "Go Right"
-                                mavarm3_2.rcover((1500+nilaikanan),1500,1557,1500,0,0,0,0)
+                                # mavarm3_2.rcover((1500+nilaikanan),1500,1557,1500,0,0,0,0)
                             elif object_cy < height / 3:
                                 direction = "Forward"
-                                mavarm3_2.rcover((1500+nilaidepan),1500,1557,1500,0,0,0,0)
+                                # mavarm3_2.rcover((1500+nilaidepan),1500,1557,1500,0,0,0,0)
                             elif object_cy > (height / 3) * 2:
                                 direction = "Backward"
-                                mavarm3_2.rcover((1500-nilaibelakang),1500,1557,1500,0,0,0,0)
+                                # mavarm3_2.rcover((1500-nilaibelakang),1500,1557,1500,0,0,0,0)
                             else :
                                 centered = True
-                                mavarm3_2.rcover(1500,1500,1550,1500,0,0,0,0)
+                                # mavarm3_2.rcover(1500,1500,1550,1500,0,0,0,0)
 
                             if direction: #Ngasih tulisan direction
                                 cv2.putText(frame, direction, (x + w + 20, y + h + 120), cv2.FONT_HERSHEY_COMPLEX, 0.7, (250, 177, 155), 2)                        
                         if centered :
                             cv2.putText(frame, "Centered", (x + w + 20, y + h + 120), cv2.FONT_HERSHEY_COMPLEX, 0.7, (250, 177, 155), 2)
-                            current_altitude = mavarm3_2.bottom_distance
-                            if current_altitude > 0.6:
-                                mavarm3_2.rcover(1500,1500,1470,1500,0,0,0,0)
-                                cv2.putText(frame, "Lowering altitude", (x + w + 20, y + h + 120), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,0,255), 2)
-                                current_altitude = mavarm3_2.bottom_distance
+                            # current_altitude = mavarm3_2.bottom_distance
+                            # if current_altitude > 0.6:
+                            #     mavarm3_2.rcover(1500,1500,1470,1500,0,0,0,0)
+                            #     cv2.putText(frame, "Lowering altitude", (x + w + 20, y + h + 120), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,0,255), 2)
+                            #     current_altitude = mavarm3_2.bottom_distance
                             
-                            if current_altitude <= 0.6:
-                                mavarm3_2.rcover(1500,1500,1557,1500,0,0,0,0) #hovering sebentar
-                                time.sleep(4)
-                                mavarm3_2.rcover(1500,1500,1590,1500,0,0,0,0) #naik
-                                centered = False
+                            # if current_altitude <= 0.6:
+                            #     mavarm3_2.rcover(1500,1500,1557,1500,0,0,0,0) #hovering sebentar
+                            #     time.sleep(4)
+                            #     mavarm3_2.rcover(1500,1500,1590,1500,0,0,0,0) #naik
+                            #     centered = False
                             #     break
-
-                    # Untuk kondisi Outdoor
+                                    
                     elif shape_label=="Rectangle" and (color_label =="RED" or color_label=="BLUE"):
                         if not centered:
                             direction = ""
                             if object_cx < width / 3:
                                 direction = "Go Left"
-                                mavarm3_2.rcover((1500-nilaikiri),1500,1557,1500,0,0,0,0)
+                                # mavarm3_2.rcover((1500-nilaikiri),1500,1557,1500,0,0,0,0)
                             elif object_cx > (width / 3) * 2:
                                 direction = "Go Right"
-                                mavarm3_2.rcover((1500+nilaikanan),1500,1557,1500,0,0,0,0)
+                                # mavarm3_2.rcover((1500+nilaikanan),1500,1557,1500,0,0,0,0)
                             elif object_cy < height / 3:
                                 direction = "Forward"
-                                mavarm3_2.rcover((1500+nilaidepan),1500,1557,1500,0,0,0,0)
+                                # mavarm3_2.rcover((1500+nilaidepan),1500,1557,1500,0,0,0,0)
                             elif object_cy > (height / 3) * 2:
                                 direction = "Backward"
-                                mavarm3_2.rcover((1500-nilaibelakang),1500,1557,1500,0,0,0,0)
+                                # mavarm3_2.rcover((1500-nilaibelakang),1500,1557,1500,0,0,0,0)
                             else :
                                 centered = True
-                                mavarm3_2.rcover(1500,1500,1550,1500,0,0,0,0)
+                                # mavarm3_2.rcover(1500,1500,1550,1500,0,0,0,0)
 
                             if direction: #Ngasih tulisan direction
                                 cv2.putText(frame, direction, (x + w + 20, y + h + 120), cv2.FONT_HERSHEY_COMPLEX, 0.7, (250, 177, 155), 2)
                         
-                        # if centered :
-                            # cv2.putText(frame, "centered", (x + w + 20, y + h + 120), cv2.FONT_HERSHEY_COMPLEX, 0.7, (250, 177, 155), 2)
-                            # current_altitude = mavarm3_2.bottom_distance
-                            # if current_altitude > 1:
-                                # mavarm3_2.rcover(1500,1500,1470,1500,0,0,0,0)
-                                # cv2.putText(frame, "Lowering altitude", (x + w + 20, y + h + 120), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,0,255), 2)
-                            # 
-                            # if current_altitude <= 1:
-                                # mavarm3_2.rcover(1500,1500,1557,1500,0,0,0,0) #hovering sebentar
-                                # time.sleep(4)
-                                # mavarm3_2.rcover(1500,1500,1590,1500,0,0,0,0) #naik
-                                # time.sleep(3)   
-
-                        if centered and drop_color is None:
-                            drop_color = color_label
-                            cv2.putText(frame, "Servo Drop Activated!", (x + w + 20, y + h + 120), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255, 0, 255), 2)
-                            time.sleep(3)
-                            # Code servo   
-                        elif centered and drop_color and drop_color != color_label:
-                            cv2.putText(frame, "Landing Initiated!", (x + w + 20, y + h + 120), cv2.FONT_HERSHEY_COMPLEX, 0.7, (0, 255, 255), 2)
-                            time.sleep(2)
-                            mavarm3_2.changemode(9)  
-                            mavarm3_2.arm(0)       
+                        if centered :
+                            cv2.putText(frame, "centered", (x + w + 20, y + h + 120), cv2.FONT_HERSHEY_COMPLEX, 0.7, (250, 177, 155), 2)
+                        #     current_altitude = mavarm3_2.bottom_distance
+                        #     if current_altitude > 1:
+                        #         mavarm3_2.rcover(1500,1500,1470,1500,0,0,0,0)
+                        #         cv2.putText(frame, "Lowering altitude", (x + w + 20, y + h + 120), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,0,255), 2)
+                            
+                        #     if current_altitude <= 1:
+                        #         mavarm3_2.rcover(1500,1500,1557,1500,0,0,0,0) #hovering sebentar
+                        #         time.sleep(4)
+                        #         mavarm3_2.rcover(1500,1500,1590,1500,0,0,0,0) #naik
+                        #         time.sleep(3)
+                        #         
                             
                     
         # Panggil fungsi untuk setiap warna

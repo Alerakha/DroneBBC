@@ -6,13 +6,13 @@ i = 0
 
 print("program wilayah V0.01")
 #Connect ke telemetri
-usbser = '/dev/ttyUSB0'	
+usbser = 'udp:192.168.1.253:14550'	
 
 #Koneksi vehicle
 #vehicle = dronekit.connect(connection_string, baud=57600, wait_ready = True, timeout = 150)
 print("Connected to ")	
 print(usbser)
-vehicle = mavutil.mavlink_connection(usbser, baud=57600)
+vehicle = mavutil.mavlink_connection(usbser, baud=1500000)
 vehicle.wait_heartbeat()
 
 def arm(armstate): # 1 or 0
