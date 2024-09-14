@@ -4,11 +4,15 @@ import threading
 import coba_uwaw
 
 # =======================================================================================||
-usbser = '/dev/ttyUSB0'
+# usbser = '/dev/ttyUSB0'
+usbser = 'udp:192.168.1.253:14550'
 # vehicle = mavutil.mavlink_connection(usbser, baud=57600)
-# Run in terminal before code : mavproxy.py --master=/dev/ttyUSB0 --baudrate 57600 --out=udp:127.0.0.1:14550
+#   Run in terminal before code : mavproxy.py --master=/dev/ttyUSB0 --baudrate 57600 --out=udp:127.0.0.1:14550
+
 vehicle = mavutil.mavlink_connection('udp:127.0.0.1:14550')
+vehicle = mavutil.mavlink_connection(usbser, baud=1500000)
 vehicle.wait_heartbeat()
+
 print(f"Connected to {usbser}")	
 print("OPENING : mavarm3_2.py....")
 time.sleep(2)
@@ -291,6 +295,32 @@ def JTL():
     time.sleep(3)
     changemode(9)
     arm(0)
+
+# OUTDOOR MISSION
+def outdoor():
+    changemode(5)
+    read_sensor(2)
+    arm(1)
+    takeoff(5)
+    sensor_thread = threading.Thread(target=update_sensors)
+    sensor_thread.daemon = True
+    sensor_thread.start()
+
+    webcam = threading.Thread(target=coba_uwaw.main)
+    webcam.daemon = True
+    webcam.start()
+    
+    adjust = threading.Thread(target=adjust_tengah)
+    adjust.daemon = True
+    adjust.start()
+    
+    while bottom_distance > 0.5:
+        maju() #3 hover in maju function
+    else:
+        print("DRONE IN LOW ALTITUDE!!!")
+        changemode(9) #Landing mode
+        arm(0)
+        
     
     
 			
@@ -324,8 +354,9 @@ def main():
     print("=============================================================================", end="")
     print("=============================================================================")
 
-    leron()
-    # JTL()
+    # leron()
+    JTL()
+    outdoor()
 
     print("PROGRAM FINISHED!! PLEASE MANUALLY CONTROLL OVER THE DRONE")
     
