@@ -354,9 +354,9 @@ def main():
     print("=============================================================================", end="")
     print("=============================================================================")
 
-    # leron()
-    JTL()
-    outdoor()
+    leron()
+    # JTL()
+    # outdoor()
 
     print("PROGRAM FINISHED!! PLEASE MANUALLY CONTROLL OVER THE DRONE")
     
