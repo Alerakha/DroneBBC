@@ -5,18 +5,31 @@ import platform
 import mavarm3_2
 import time
 # from pymavlink import mavutil
-
+# Buat bagaimana caranya agar drone dapat memposisikan diri ke tengah objek baru turun, dan jika pada saat turun dia bergeser dia akan mengembalikan posisi ke center sebelum menurunkan ketinggian lagi, kemudian setelah turun pada ketinggian tertentu dia hover diam beberapa detik dahulu sbeelum lanjut. Buat flag condition
+# Outdoor : naik +- 5~10 meter kemudian maju sampai detect kotak, kemudian hover sambil turun ketinggian ~1 meter dan drop menggerakkan servo, dia belok kiri atau kanan berdasarkan situasi indoornya. Jika di misi indoor dia belok ke kanan maka misi outdoor setelah dia selesai pada persegi pertama maka dia yaw 90 derajat ke kiri, yaw 90 derajat kemudian lurus sampai menemukan persegi lagi. Setelah itu yaw lagi 120 derajat, lurus sampai nemu persegi terakhir +> landing.
+# How to change the camera drone using channel 11 on rcover
 def main():
 
     if platform.system() == 'Linux':
-        cap = cv2.VideoCapture(0, cv2.CAP_V4L2)
+        cap0 = cv2.VideoCapture(0, cv2.CAP_V4L2)
+        cap1 = cv2.VideoCapture(1, cv2.CAP_V4L2)
     else:
-        cap = cv2.VideoCapture(0)
+        cap0 = cv2.VideoCapture(0) # Kamera bawah
+        cap1 = cv2.VideoCapture(1) # Kamera depan, lek kuwalik kari diwalik
     
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 720)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+    cap0.set(cv2.CAP_PROP_FRAME_WIDTH, 720)
+    cap0.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+    cap1.set(cv2.CAP_PROP_FRAME_WIDTH, 720)
+    cap1.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+    
+    active_cam = 0
+    
     while True:
-        ret, frame = cap.read()
+        if active_cam == 0 :
+            ret, frame = cap0.read()
+        else :
+            ret, frame = cap1.read()
+            
         hsv_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         height, width, _ = frame.shape
         
@@ -128,7 +141,7 @@ def main():
                         while centered :
                             current_altitude = mavarm3_2.bottom_distance
                             if current_altitude > 0.6:
-                                mavarm3_2.rcover(1500,1500,1470,1500,0,0,0,0)
+                                mavarm3_2.rcover(1500,1500,1480,1500,0,0,0,0)
                                 cv2.putText(frame, "Lowering altitude", (x + w + 20, y + h + 120), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,0,255), 2)
                                 current_altitude = mavarm3_2.bottom_distance
                             
@@ -164,7 +177,7 @@ def main():
                         while centered :
                             current_altitude = mavarm3_2.bottom_distance
                             if current_altitude > 1:
-                                mavarm3_2.rcover(1500,1500,1470,1500,0,0,0,0)
+                                mavarm3_2.rcover(1500,1500,1480,1500,0,0,0,0)
                                 cv2.putText(frame, "Lowering altitude", (x + w + 20, y + h + 120), cv2.FONT_HERSHEY_COMPLEX, 0.7, (255,0,255), 2)
                             
                             if current_altitude <= 1:
@@ -187,7 +200,8 @@ def main():
         if key == 27:  # ESC key to exit
             break
 
-    cap.release()
+    cap0.release()
+    cap1.release()
     cv2.destroyAllWindows()
     
 if __name__ == "__main__":
